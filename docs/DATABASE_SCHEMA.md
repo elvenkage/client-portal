@@ -2,56 +2,40 @@
 
 Client Portal Agency System
 
-Database Engine: MySQL
-Framework: Laravel
+Database Engine: MySQL  
+Framework: Laravel  
 
-All main tables support soft deletes.
+All primary tables support soft deletes unless stated otherwise.
 
 ---
 
 # Users Table
 
-Stores all system users.
+Stores all users including agency staff and clients.
 
 users
 
-id
-name
-email
-password
-role
-two_factor_enabled
-two_factor_secret
-avatar
-created_at
-updated_at
-deleted_at
+id  
+name  
+email  
+password  
+role  
+two_factor_enabled  
+two_factor_secret  
+avatar  
+created_at  
+updated_at  
+deleted_at  
 
-Role values:
+Role values
 
-super_admin
-project_manager
-team_member
-client
+super_admin  
+admin  
+project_manager  
+team_member  
+client  
 
----
-
-# Clients Table
-
-Represents client companies or individuals.
-
-clients
-
-id
-name
-company_name
-email
-phone
-address
-notes
-created_at
-updated_at
-deleted_at
+Clients are simply users with role = client.
 
 ---
 
@@ -61,304 +45,252 @@ Main project container.
 
 projects
 
-id
-client_id
-project_manager_id
-name
-description
-status
-visibility
-progress
-start_date
-deadline
-show_team_to_client
-created_at
-updated_at
-deleted_at
+id  
+project_manager_id  
+name  
+description  
+status  
+visibility  
+progress  
+start_date  
+deadline  
+show_team_to_client  
+created_at  
+updated_at  
+deleted_at  
 
-Status values:
+Status values
 
-planning
-in_progress
-completed
-on_hold
-cancelled
+planning  
+in_progress  
+completed  
+on_hold  
+cancelled  
 
-Visibility values:
+Visibility values
 
-draft
-active
-completed
-archived
+draft  
+active  
+completed  
+archived  
 
 ---
 
 # Project Members Table
 
-Links team members to projects.
+Defines which users belong to a project.
 
 project_members
 
-id
-project_id
-user_id
-role
-created_at
+id  
+project_id  
+user_id  
+role  
+created_at  
 
-Role values:
+Role values
 
-project_manager
-team_member
+project_manager  
+team_member  
+client  
+
+This table controls project access.
 
 ---
 
 # Milestones Table
 
-Milestones divide projects into phases.
-
 milestones
 
-id
-project_id
-title
-description
-status
-start_date
-deadline
-manual_override
-created_at
-updated_at
-deleted_at
+id  
+project_id  
+title  
+description  
+status  
+start_date  
+deadline  
+manual_override  
+created_at  
+updated_at  
+deleted_at  
 
-Status values:
+Status values
 
-pending
-in_progress
-completed
+pending  
+in_progress  
+completed  
 
 ---
 
 # Tasks Table
 
-Tasks represent actionable work.
-
 tasks
 
-id
-project_id
-milestone_id
-assigned_to
-title
-description
-status
-priority
-review_stage
-client_review_required
-client_review_deadline
-start_date
-deadline
-created_at
-updated_at
-deleted_at
+id  
+project_id  
+milestone_id  
+assigned_to  
+title  
+description  
+status  
+priority  
+review_stage  
+client_review_required  
+client_review_deadline  
+start_date  
+deadline  
+created_at  
+updated_at  
+deleted_at  
 
-Status values:
+Status values
 
-todo
-in_progress
-review
-completed
+todo  
+in_progress  
+review  
+completed  
 
-Priority values:
+Priority values
 
-low
-medium
-high
-urgent
+low  
+medium  
+high  
+urgent  
 
-Review stage values:
+Review stage values
 
-team_review
-client_review
+none  
+team_review  
+client_review  
+
+assigned_to references users.id
 
 ---
 
 # Subtasks Table
 
-Subtasks break down tasks.
-
 subtasks
 
-id
-task_id
-title
-status
-created_at
-updated_at
-deleted_at
+id  
+task_id  
+title  
+status  
+created_at  
+updated_at  
+deleted_at  
 
-Status values:
+Status values
 
-todo
-completed
+todo  
+completed  
 
 ---
 
 # Files Table
 
-Stores file previews and external file links.
-
 files
 
-id
-project_id
-milestone_id
-task_id
-uploaded_by
-image_path
-external_link
-created_at
-updated_at
-deleted_at
+id  
+project_id  
+milestone_id  
+task_id  
+uploaded_by  
+image_path  
+external_link  
+created_at  
+updated_at  
+deleted_at  
 
-Server stores only images.
+Only images stored locally.
 
-External files must be stored using external cloud storage.
-
-Examples:
-
-Google Drive
-Dropbox
-OneDrive
+Other files must use external links.
 
 ---
 
 # Comments Table
 
-Supports discussions.
-
 comments
 
-id
-user_id
-project_id
-milestone_id
-task_id
-message
-image_path
-external_link
-created_at
-updated_at
-deleted_at
-
-Comments may contain:
-
-text
-image
-external link
+id  
+user_id  
+project_id  
+milestone_id  
+task_id  
+message  
+image_path  
+external_link  
+created_at  
+updated_at  
+deleted_at  
 
 ---
 
 # Activity Logs Table
 
-Tracks important project events.
-
 activity_logs
 
-id
-project_id
-user_id
-action
-target_type
-target_id
-description
-created_at
+id  
+project_id  
+user_id  
+action  
+target_type  
+target_id  
+description  
+created_at  
 
-Example actions:
-
-task_created
-task_completed
-file_uploaded
-comment_added
-milestone_completed
+Activity logs must not use soft deletes.
 
 ---
 
 # Notifications Table
 
-Handles system notifications.
-
 notifications
 
-id
-user_id
-project_id
-type
-title
-message
-is_read
-created_at
+id  
+user_id  
+project_id  
+type  
+title  
+message  
+is_read  
+created_at  
 
-Notification channels:
+Notification types
 
-in_app
-email
+in_app  
+email  
 
----
-
-# Default Laravel Tables
-
-password_resets
-
-id
-email
-token
-created_at
-
-failed_jobs
-
-id
-uuid
-connection
-queue
-payload
-exception
-failed_at
+Notifications must not use soft deletes.
 
 ---
 
 # Database Relationships
 
-Client → Projects
+users → project_members  
 
-Projects → Milestones
+projects → project_members  
 
-Milestones → Tasks
+projects → milestones  
+projects → tasks  
+projects → files  
+projects → comments  
+projects → activity_logs  
+projects → notifications  
 
-Tasks → Subtasks
+milestones → tasks  
 
-Projects → Files
-
-Projects → Comments
-
-Projects → Activity Logs
-
-Projects → Notifications
-
-Projects → Project Members
+tasks → subtasks  
 
 ---
 
 # Indexing Recommendations
 
-Add indexes on:
-
-projects.client_id
-projects.project_manager_id
-tasks.project_id
-tasks.assigned_to
-milestones.project_id
-comments.project_id
-files.project_id
+projects.project_manager_id  
+tasks.project_id  
+tasks.assigned_to  
+milestones.project_id  
+comments.project_id  
+files.project_id  
 
 Indexes improve dashboard performance.
 
@@ -366,15 +298,17 @@ Indexes improve dashboard performance.
 
 # Soft Delete Policy
 
-The following tables must support soft deletes:
+Soft delete enabled
 
-users
-clients
-projects
-milestones
-tasks
-subtasks
-files
-comments
+users  
+projects  
+milestones  
+tasks  
+subtasks  
+files  
+comments  
 
-Activity logs and notifications should not be soft deleted.
+No soft delete
+
+activity_logs  
+notifications

@@ -4,7 +4,8 @@ namespace App\Livewire\Clients;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
-use App\Models\Client;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class CreateClientModal extends Component
 {
@@ -12,10 +13,14 @@ class CreateClientModal extends Component
 
     // Form fields
     public string $name = '';
-    public string $company_name = '';
     public string $email = '';
-    public string $phone = '';
-    public string $notes = '';
+    public string $password = '';
+
+    protected $rules = [
+        'name' => 'required|string|max:255',
+        'email' => 'nullable|string|max:255|unique:users,email',
+        'password' => 'required|string|min:6',
+    ];
 
     #[On('openCreateClientModal')]
     public function openModal(): void
@@ -34,23 +39,20 @@ class CreateClientModal extends Component
     public function resetForm(): void
     {
         $this->name = '';
-        $this->company_name = '';
         $this->email = '';
-        $this->phone = '';
-        $this->notes = '';
+        $this->password = '';
     }
 
-    public function save(): void
+    public function createClient(): void
     {
-        $validated = $this->validate([
-            'name' => 'required|string|max:255',
-            'company_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $this->validate();
 
-        Client::create($validated);
+        User::create([
+            'name' => $this->name,
+            'email' => $this->email ?: null,
+            'password' => Hash::make($this->password),
+            'role' => 'client',
+        ]);
 
         $this->closeModal();
         $this->dispatch('client-created');

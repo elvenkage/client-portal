@@ -48,6 +48,7 @@ class TaskBoard extends Component
         $task = Task::findOrFail($taskId);
         $this->taskService->updateStatus($task, Task::STATUS_IN_PROGRESS);
         $this->loadTasks();
+        $this->dispatch('project-updated');
     }
 
     public function submitForReview($taskId)
@@ -55,6 +56,7 @@ class TaskBoard extends Component
         $task = Task::findOrFail($taskId);
         $this->taskService->submitForReview($task);
         $this->loadTasks();
+        $this->dispatch('project-updated');
     }
 
     public function completeTask($taskId)
@@ -62,6 +64,7 @@ class TaskBoard extends Component
         $task = Task::findOrFail($taskId);
         $this->taskService->approveTask($task);
         $this->loadTasks();
+        $this->dispatch('project-updated');
     }
 
     public function updateTaskStatus($taskId, $status)
@@ -92,7 +95,10 @@ class TaskBoard extends Component
             $this->dispatch('workflow-error', message: $e->getMessage());
         }
 
+        \App\Services\ProjectStatusService::updateProjectStatus($task->project);
+
         $this->loadTasks();
+        $this->dispatch('project-updated');
     }
 
     public function render()

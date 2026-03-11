@@ -38,7 +38,7 @@ class UserManager extends Component
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->userId),
             ],
-            'role' => 'required|in:admin,project_manager,team_member,client',
+            'role' => 'required|in:admin,project_manager,team_member',
         ];
     }
 
@@ -175,20 +175,18 @@ class UserManager extends Component
 
     public function render()
     {
-        $usersQuery = User::query();
-
-        if ($this->search) {
-            $usersQuery->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('email', 'like', '%' . $this->search . '%');
-            });
-        }
-
-        if ($this->roleFilter) {
-            $usersQuery->where('role', $this->roleFilter);
-        }
-
-        $users = $usersQuery->latest()->paginate(10);
+        $users = User::where('role', '!=', 'client')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('email', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->roleFilter, function ($query) {
+                $query->where('role', $this->roleFilter);
+            })
+            ->latest()
+            ->paginate(10);
 
         return view('livewire.users.user-manager', [
             'users' => $users,

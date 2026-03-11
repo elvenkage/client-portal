@@ -13,7 +13,6 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'client_id',
         'project_manager_id',
         'name',
         'description',
@@ -39,19 +38,17 @@ class Project extends Model
     //  Relationships
     // ──────────────────────────────────────────────
 
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(Client::class);
-    }
+
 
     public function projectManager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'project_manager_id');
     }
 
-    public function members(): HasMany
+    public function members()
     {
-        return $this->hasMany(ProjectMember::class);
+        return $this->belongsToMany(User::class, 'project_members')
+                    ->withPivot('role');
     }
 
     public function milestones(): HasMany

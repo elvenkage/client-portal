@@ -24,10 +24,6 @@
                 <option>Active</option>
                 <option>Completed</option>
             </select>
-            <select
-                class="border-gray-200 rounded-lg text-sm text-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                <option>All Clients</option>
-            </select>
         </div>
 
         {{-- Table Card --}}
@@ -36,7 +32,7 @@
                 <thead class="bg-gray-50/80 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                         <th class="px-6 py-3.5 font-medium">Project</th>
-                        <th class="px-6 py-3.5 font-medium">Client</th>
+                        <th class="px-6 py-3.5 font-medium">Manager</th>
                         <th class="px-6 py-3.5 font-medium">Status</th>
                         <th class="px-6 py-3.5 font-medium">Progress</th>
                         <th class="px-6 py-3.5 font-medium">Deadline</th>
@@ -45,13 +41,13 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @forelse(\App\Models\Project::with(['client', 'tasks'])->latest()->get() as $project)
+                    @forelse(\App\Models\Project::with(['projectManager', 'tasks'])->latest()->get() as $project)
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-6 py-4">
                                 <a href="{{ route('projects.show', $project->id) }}"
                                     class="font-medium text-gray-900 hover:text-indigo-600 transition-colors">{{ $project->name }}</a>
                             </td>
-                            <td class="px-6 py-4">{{ $project->client->name ?? 'Internal' }}</td>
+                            <td class="px-6 py-4">{{ $project->projectManager->name ?? '—' }}</td>
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 capitalize">

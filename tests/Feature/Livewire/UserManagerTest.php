@@ -39,13 +39,13 @@ class UserManagerTest extends TestCase
         Livewire::test(UserManager::class)
             ->set('name', 'New User')
             ->set('email', 'newuser@example.com')
-            ->set('role', 'client')
+            ->set('role', 'team_member')
             ->call('saveUser')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('users', [
             'email' => 'newuser@example.com',
-            'role' => 'client',
+            'role' => 'team_member',
         ]);
 
         // We know Password broker runs because we get to the end without errors,
@@ -59,7 +59,7 @@ class UserManagerTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin);
 
-        $user = User::factory()->create(['role' => 'client', 'name' => 'Old Name']);
+        $user = User::factory()->create(['role' => 'team_member', 'name' => 'Old Name']);
 
         Livewire::test(UserManager::class)
             ->call('editUser', $user->id)

@@ -15,10 +15,10 @@ class FileDownloadController extends Controller
     {
         $user = auth()->user();
 
-        // 1. If user is a client, verify the file belongs to their project
+        // 1. If user is a client, verify they are a member of the project
         if ($user->isClient()) {
             $project = $file->project;
-            if (!$project || $project->client_id !== $user->client_id || $project->visibility === 'private') {
+            if (!$project || !$project->members()->where('user_id', $user->id)->exists() || $project->visibility === 'private') {
                 abort(403, 'Unauthorized access to this file.');
             }
         }

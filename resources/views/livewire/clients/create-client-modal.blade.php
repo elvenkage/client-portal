@@ -22,7 +22,7 @@
                 </div>
 
                 {{-- Form --}}
-                <form wire:submit="save">
+                <form wire:submit.prevent="createClient">
                     <div class="px-6 py-5 space-y-4">
 
                         {{-- Client Name --}}
@@ -34,37 +34,22 @@
                             @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        {{-- Company --}}
+                        {{-- Email (optional) --}}
                         <div>
-                            <label for="client-company"
-                                class="block text-sm font-medium text-gray-700 mb-1.5">Company</label>
-                            <input type="text" wire:model="company_name" id="client-company" placeholder="e.g. Acme Corp"
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow">
-                            @error('company_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        {{-- Email --}}
-                        <div>
-                            <label for="client-email" class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+                            <label for="client-email" class="block text-sm font-medium text-gray-700 mb-1.5">Email Address
+                                <span class="text-gray-400 text-xs font-normal">(optional)</span></label>
                             <input type="email" wire:model="email" id="client-email" placeholder="john@acme.com"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow">
                             @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        {{-- Phone --}}
+                        {{-- Password --}}
                         <div>
-                            <label for="client-phone" class="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
-                            <input type="text" wire:model="phone" id="client-phone" placeholder="+1 (555) 000-0000"
+                            <label for="client-password" class="block text-sm font-medium text-gray-700 mb-1.5">Password
+                                <span class="text-red-500">*</span></label>
+                            <input type="password" wire:model="password" id="client-password" placeholder="Minimum 6 characters"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow">
-                            @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        {{-- Notes --}}
-                        <div>
-                            <label for="client-notes" class="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
-                            <textarea wire:model="notes" id="client-notes" rows="3" placeholder="Any additional notes..."
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"></textarea>
-                            @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                     </div>
@@ -78,8 +63,8 @@
                         <button type="submit"
                             class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm"
                             wire:loading.attr="disabled" wire:loading.class="opacity-60">
-                            <span wire:loading.remove wire:target="save">Create Client</span>
-                            <span wire:loading wire:target="save">Creating...</span>
+                            <span wire:loading.remove wire:target="createClient">Create Client</span>
+                            <span wire:loading wire:target="createClient">Creating...</span>
                         </button>
                     </div>
                 </form>

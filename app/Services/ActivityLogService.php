@@ -127,4 +127,17 @@ class ActivityLogService
             $file,
         );
     }
+
+    public function logProjectStatusChanged(Model $project, string $oldStatus, string $newStatus): void
+    {
+        $oldFormatted = ucfirst(str_replace('_', ' ', $oldStatus));
+        $newFormatted = ucfirst(str_replace('_', ' ', $newStatus));
+        
+        $this->log(
+            $project->id,
+            'project_status_changed',
+            "Project status changed from {$oldFormatted} to {$newFormatted}.",
+            $project,
+        );
+    }
 }

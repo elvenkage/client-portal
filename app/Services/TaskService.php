@@ -186,8 +186,9 @@ class TaskService
             'review_stage' => Task::REVIEW_CLIENT,
         ]);
 
-        if ($task->project->client_id) {
-            $clientUsers = \App\Models\User::where('client_id', $task->project->client_id)->get();
+        $clientUsers = $task->project->members()->where('role', 'client')->get();
+
+        if ($clientUsers->isNotEmpty()) {
             foreach ($clientUsers as $client) {
                 $this->notificationService->sendInApp(
                     userId: $client->id,
@@ -312,7 +313,7 @@ class TaskService
      */
     protected function syncProgress(Task $task): void
     {
-        $this->projectService->calculateProgress($task->project);
+        ProjectStatusService::updateProjectStatus($task->project);
 
         if ($task->milestone_id) {
             $this->milestoneService->calculateProgress($task->milestone);

@@ -32,7 +32,11 @@ Route::middleware(['auth', EnsureUserIsStaff::class])->group(function () {
     Route::get('/projects/{project}/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
 });
 
-Route::view('/', 'welcome');
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect('/dashboard')
+        : redirect('/login');
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified', EnsureUserIsStaff::class])
@@ -47,7 +51,7 @@ Route::view('profile', 'profile')
 // ──────────────────────────────────────────────
 Route::middleware(['auth', EnsureUserIsStaff::class])->group(function () {
     Route::view('projects', 'projects.index')->name('projects.index');
-    Route::view('clients', 'clients.index')->name('clients.index');
+    Route::get('clients', \App\Livewire\Clients\ClientsIndex::class)->name('clients.index');
     Route::get('team', \App\Livewire\Users\UserManager::class)->name('team.index');
     Route::view('files', 'files.index')->name('files.index');
     Route::view('activity', 'activity.index')->name('activity.index');

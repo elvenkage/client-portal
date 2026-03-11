@@ -20,7 +20,6 @@
                 <option value="admin">Admin</option>
                 <option value="project_manager">Project Manager</option>
                 <option value="team_member">Team Member</option>
-                <option value="client">Client</option>
             </select>
         </div>
 
@@ -139,7 +138,6 @@
                                     <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                                     <select wire:model="role" id="role"
                                         class="mt-1.5 block w-full border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                        <option value="client">Client</option>
                                         <option value="team_member">Team Member</option>
                                         <option value="project_manager">Project Manager</option>
                                         <option value="admin">Admin</option>

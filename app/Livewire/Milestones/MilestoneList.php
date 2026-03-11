@@ -12,8 +12,9 @@ class MilestoneList extends Component
     public $projectId;
     public $milestones;
 
-    // Create-form fields
+    // Create/Edit form fields
     public $showForm = false;
+    public $editingMilestoneId = null;
     public $title = '';
     public $description = '';
     public $deadline = '';
@@ -35,6 +36,7 @@ class MilestoneList extends Component
 
     #[On('task-created')]
     #[On('milestone-updated')]
+    #[On('project-updated')]
     public function loadMilestones()
     {
         $this->milestones = Milestone::where('project_id', $this->projectId)
@@ -57,6 +59,7 @@ class MilestoneList extends Component
     public function toggleForm()
     {
         $this->showForm = !$this->showForm;
+        $this->editingMilestoneId = null;
         $this->resetValidation();
         $this->resetFormFields();
     }
@@ -76,12 +79,35 @@ class MilestoneList extends Component
             'deadline' => 'nullable|date',
         ]);
 
-        $validated['project_id'] = $this->projectId;
-
-        $this->milestoneService->createMilestone($validated);
+        if ($this->editingMilestoneId) {
+            $milestone = Milestone::findOrFail($this->editingMilestoneId);
+            $milestone->update($validated);
+        } else {
+            $validated['project_id'] = $this->projectId;
+            $this->milestoneService->createMilestone($validated);
+        }
 
         $this->showForm = false;
+        $this->editingMilestoneId = null;
         $this->resetFormFields();
+        $this->loadMilestones();
+    }
+
+    public function editMilestone($milestoneId)
+    {
+        $milestone = Milestone::findOrFail($milestoneId);
+
+        $this->editingMilestoneId = $milestone->id;
+        $this->title = $milestone->title;
+        $this->description = $milestone->description ?? '';
+        $this->deadline = $milestone->deadline ? $milestone->deadline->format('Y-m-d') : '';
+        $this->showForm = true;
+    }
+
+    public function deleteMilestone($milestoneId)
+    {
+        $milestone = Milestone::findOrFail($milestoneId);
+        $milestone->delete();
         $this->loadMilestones();
     }
 

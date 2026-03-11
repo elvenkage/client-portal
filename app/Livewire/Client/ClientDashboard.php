@@ -18,7 +18,9 @@ class ClientDashboard extends Component
     {
         $user = auth()->user();
 
-        $this->projects = Project::where('client_id', $user->client_id)
+        $this->projects = Project::whereHas('members', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
             ->where('visibility', '!=', 'private')
             ->withCount(['milestones', 'files'])
             ->orderBy('updated_at', 'desc')

@@ -37,8 +37,8 @@ class MilestoneService
         $this->notificationService->notifyMilestoneCompleted($milestone);
         $this->activityLogService->logMilestoneCompleted($milestone);
 
-        // Recalculate parent project progress
-        $this->projectService->calculateProgress($milestone->project);
+        // Recalculate parent project progress and status
+        \App\Services\ProjectStatusService::updateProjectStatus($milestone->project);
 
         return $milestone;
     }

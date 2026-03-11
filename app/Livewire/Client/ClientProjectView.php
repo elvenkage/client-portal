@@ -22,7 +22,9 @@ class ClientProjectView extends Component
 
         // Load project scoped to the client's records
         $this->project = Project::where('id', $projectId)
-            ->where('client_id', $user->client_id)
+            ->whereHas('members', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
             ->where('visibility', '!=', 'private')
             ->firstOrFail();
 

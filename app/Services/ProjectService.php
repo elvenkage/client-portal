@@ -17,6 +17,9 @@ class ProjectService
     public function createProject(array $data): Project
     {
         return DB::transaction(function () use ($data) {
+            $clientId = $data['client_user_id'] ?? null;
+            unset($data['client_user_id']); // Ensure it doesn't reach the model
+
             $project = Project::create($data);
 
             // Automatically add the project manager as a member
@@ -25,6 +28,15 @@ class ProjectService
                     'project_id' => $project->id,
                     'user_id' => $data['project_manager_id'],
                     'role' => 'project_manager',
+                ]);
+            }
+
+            // Automatically add the assigned client as a member
+            if (isset($clientId)) {
+                ProjectMember::create([
+                    'project_id' => $project->id,
+                    'user_id' => $clientId,
+                    'role' => 'client',
                 ]);
             }
 
@@ -58,25 +70,4 @@ class ProjectService
             ->delete() > 0;
     }
 
-    /**
-     * Recalculate and persist project progress based on task completion.
-     *
-     * Formula: completed_tasks / total_tasks × 100
-     */
-    public function calculateProgress(Project $project): int
-    {
-        $totalTasks = $project->tasks()->count();
-
-        if ($totalTasks === 0) {
-            $project->update(['progress' => 0]);
-            return 0;
-        }
-
-        $completedTasks = $project->tasks()->where('status', 'completed')->count();
-        $progress = (int) round(($completedTasks / $totalTasks) * 100);
-
-        $project->update(['progress' => $progress]);
-
-        return $progress;
-    }
 }

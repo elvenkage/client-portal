@@ -27,7 +27,6 @@ class User extends Authenticatable
         'two_factor_enabled',
         'two_factor_secret',
         'avatar',
-        'client_id',
     ];
 
     /**
@@ -60,11 +59,12 @@ class User extends Authenticatable
     // ──────────────────────────────────────────────
 
     /**
-     * The client record this user belongs to (for client-role users).
+     * Projects this user has access to via project_members.
      */
-    public function client(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function projects()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsToMany(Project::class, 'project_members')
+                    ->withPivot('role');
     }
 
     /**

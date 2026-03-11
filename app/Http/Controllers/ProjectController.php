@@ -17,7 +17,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['client', 'projectManager'])
+        $projects = Project::with(['projectManager', 'members'])
             ->latest()
             ->paginate(20);
 
@@ -30,7 +30,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'client_user_id' => 'nullable|exists:users,id',
             'project_manager_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -52,7 +52,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['client', 'projectManager', 'milestones', 'members.user']);
+        $project->load(['projectManager', 'milestones', 'members']);
 
         return view('projects.show', compact('project'));
     }

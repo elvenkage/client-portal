@@ -26,9 +26,20 @@
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</p>
-                <p class="mt-2 text-sm font-semibold text-gray-900 uppercase">
-                    {{ str_replace('_', ' ', $project->status) }}
-                </p>
+                @if(auth()->user()->isSuperAdmin() || auth()->user()->role === 'admin' || auth()->user()->isProjectManager())
+                    <select wire:change="updateProjectStatus($event.target.value)"
+                        class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 font-semibold uppercase">
+                        <option value="planning" {{ $project->status === 'planning' ? 'selected' : '' }}>Planning</option>
+                        <option value="in_progress" {{ $project->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="on_hold" {{ $project->status === 'on_hold' ? 'selected' : '' }}>On Hold</option>
+                        <option value="completed" {{ $project->status === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="cancelled" {{ $project->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                @else
+                    <p class="mt-2 text-sm font-semibold text-gray-900 uppercase">
+                        {{ str_replace('_', ' ', $project->status) }}
+                    </p>
+                @endif
             </div>
             <div class="h-10 w-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
