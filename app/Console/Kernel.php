@@ -1,0 +1,1 @@
+$schedule->command('check:client-review-deadline')->everyFiveMinutes();
