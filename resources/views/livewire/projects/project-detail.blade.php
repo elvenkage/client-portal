@@ -106,11 +106,7 @@
                 <h2 class="text-base font-semibold text-gray-900">Milestones</h2>
             </div>
             <div class="p-6 flex-1">
-                @if($project->milestones->count() > 0)
-                    <livewire:milestones.milestone-list :projectId="$project->id" />
-                @else
-                    <div class="text-center py-8 text-sm text-gray-400">No milestones yet</div>
-                @endif
+                <livewire:milestones.milestone-list :projectId="$project->id" />
             </div>
         </div>
 
